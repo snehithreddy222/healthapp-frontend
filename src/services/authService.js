@@ -13,6 +13,11 @@ export const authService = {
     }
   },
 
+  async register({ username, email, password, role }) {
+    const { data } = await http.post("/auth/register", { username, email, password, role });
+    return data;
+  },
+
   async login({ username, password }) {
     const { data } = await http.post("/auth/login", { username, password });
     if (data?.success && data?.data) {

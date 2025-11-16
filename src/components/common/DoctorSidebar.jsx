@@ -1,19 +1,18 @@
-// src/components/common/Sidebar.jsx
+// src/components/common/DoctorSidebar.jsx
 import React, { useState } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import {
   FiGrid,
   FiCalendar,
+  FiUsers,
   FiMessageSquare,
   FiDroplet,
-  FiHeart,
-  FiCreditCard,
   FiSettings,
   FiLogOut,
 } from "react-icons/fi";
 import { authService } from "../../services/authService";
 
-const Item = ({ to, icon: Icon, label, onClick }) => (
+const DoctorItem = ({ to, icon: Icon, label, onClick }) => (
   <NavLink
     to={to}
     onClick={onClick}
@@ -59,7 +58,7 @@ const Item = ({ to, icon: Icon, label, onClick }) => (
   </NavLink>
 );
 
-export default function Sidebar({ onLogoutRequest, onItemClick }) {
+export default function DoctorSidebar() {
   const navigate = useNavigate();
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
@@ -67,19 +66,15 @@ export default function Sidebar({ onLogoutRequest, onItemClick }) {
   const closeLogout = () => setShowLogoutConfirm(false);
 
   const handleLogoutConfirmed = () => {
-    if (onLogoutRequest) {
-      onLogoutRequest();
-    } else {
-      authService.logout();
-      navigate("/login");
-    }
+    authService.logout();
     setShowLogoutConfirm(false);
+    navigate("/login");
   };
 
   return (
     <>
       <aside className="shell-sidebar relative overflow-hidden">
-        {/* Full-height, soft gradient background */}
+        {/* Soft gradient background for doctor view */}
         <div className="absolute inset-0 bg-gradient-to-b from-sky-50 via-sky-100 to-slate-50" />
 
         {/* Content layer */}
@@ -94,66 +89,51 @@ export default function Sidebar({ onLogoutRequest, onItemClick }) {
                 HealthApp
               </span>
               <span className="text-[11px] text-slate-500">
-                Personal health, in one place.
+                Care team workspace.
               </span>
             </div>
           </div>
 
           {/* Section label */}
           <p className="mt-4 px-4 text-[11px] font-semibold tracking-[0.12em] text-slate-500">
-            OVERVIEW
+            DOCTOR VIEW
           </p>
 
-          {/* Main nav */}
-          <nav className="mt-2 space-y-1">
-            <Item
-              to="/patient/dashboard"
+          {/* Main nav: make it scrollable for shorter screens */}
+          <nav className="mt-2 flex-1 overflow-y-auto pr-1 space-y-1">
+            <DoctorItem
+              to="/doctor/dashboard"
               icon={FiGrid}
               label="Dashboard"
-              onClick={onItemClick}
             />
-            <Item
-              to="/patient/appointments"
+            <DoctorItem
+              to="/doctor/schedule"
               icon={FiCalendar}
-              label="Appointments"
-              onClick={onItemClick}
+              label="Today’s schedule"
             />
-            <Item
-              to="/patient/messages"
+            <DoctorItem
+              to="/doctor/patients"
+              icon={FiUsers}
+              label="My patients"
+            />
+            <DoctorItem
+              to="/doctor/messages"
               icon={FiMessageSquare}
-              label="Messages"
-              onClick={onItemClick}
+              label="Inbox"
             />
-            <Item
-              to="/patient/test-results"
+            <DoctorItem
+              to="/doctor/test-results"
               icon={FiDroplet}
-              label="Test Results"
-              onClick={onItemClick}
-            />
-            <Item
-              to="/patient/medications"
-              icon={FiHeart}
-              label="Medications"
-              onClick={onItemClick}
-            />
-            <Item
-              to="/patient/billings"
-              icon={FiCreditCard}
-              label="Billings"
-              onClick={onItemClick}
+              label="Lab reviews"
             />
           </nav>
 
-          {/* Spacer pushes footer to bottom while staying in gradient */}
-          <div className="flex-1" />
-
-          {/* Footer area */}
+          {/* Footer actions */}
           <div className="px-3 pb-4 pt-3 border-t border-slate-200/70 space-y-2">
-            <Item
-              to="/patient/settings"
+            <DoctorItem
+              to="/doctor/settings"
               icon={FiSettings}
-              label="Account Settings"
-              onClick={onItemClick}
+              label="Account settings"
             />
 
             <button
@@ -174,11 +154,11 @@ export default function Sidebar({ onLogoutRequest, onItemClick }) {
         <div className="fixed inset-0 z-[9999] bg-slate-900/35 backdrop-blur-sm flex items-center justify-center px-4">
           <div className="bg-white rounded-2xl shadow-xl max-w-md w-full p-6">
             <h2 className="text-lg font-semibold text-gray-900">
-              Sign out of HealthApp?
+              Sign out of the doctor portal?
             </h2>
             <p className="mt-2 text-sm text-gray-600">
-              You will be logged out on this device. You can sign in again at any
-              time to view your records and appointments.
+              You will be logged out on this device. You can sign in again at
+              any time to manage your patients and schedule.
             </p>
 
             <div className="mt-6 flex justify-end gap-3">

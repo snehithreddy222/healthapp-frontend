@@ -3,38 +3,32 @@ import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import ProtectedRoute from "./routes/ProtectedRoute";
 
-// Layout
-import Sidebar from "./components/common/Sidebar";
-import Topbar from "./components/common/Topbar";
+// Layouts
+import PatientLayout from "./layouts/PatientLayout";
+import DoctorLayout from "./layouts/DoctorLayout";
 
-// Pages
+// Auth pages
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+
+// Patient pages
 import PatientDashboard from "./pages/patient/PatientDashboard";
 import PatientAppointments from "./pages/patient/Appointments";
 import PatientMessages from "./pages/patient/PatientMessages";
 import TestResults from "./pages/patient/TestResults";
 import Medications from "./pages/patient/Medications";
 import Billings from "./pages/patient/Billings";
-import ScheduleAppointment from "./pages/patient/ScheduleAppointment"; // <-- NEW
+import ScheduleAppointment from "./pages/patient/ScheduleAppointment";
 import AccountSettings from "./pages/patient/AccountSettings";
+import PatientOnboarding from "./pages/patient/PatientOnboarding";
 
-function PatientLayout({ children }) {
-  return (
-    <div className="min-h-screen flex bg-gray-50">
-      {/* Sidebar (persistent) */}
-      <aside className="w-[244px] bg-white border-r border-gray-200 sticky top-0 h-screen">
-        <Sidebar role="PATIENT" />
-      </aside>
-
-      {/* Main column */}
-      <div className="flex-1 min-w-0 flex flex-col">
-        <Topbar />
-        <main className="main-inner">{children}</main>
-      </div>
-    </div>
-  );
-}
+// Doctor pages
+import DoctorDashboard from "./pages/doctor/DoctorDashboard";
+import DoctorSchedule from "./pages/doctor/DoctorSchedule";
+import DoctorPatients from "./pages/doctor/DoctorPatients";
+import DoctorMessages from "./pages/doctor/DoctorMessages";
+import DoctorTestResults from "./pages/doctor/DoctorTestResults";
+import DoctorAccountSettings from "./pages/doctor/DoctorAccountSettings";
 
 export default function App() {
   return (
@@ -45,7 +39,19 @@ export default function App() {
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
 
-          {/* Patient routes (protected) */}
+          {/* Patient onboarding */}
+          <Route
+            path="/patient/onboarding"
+            element={
+              <ProtectedRoute allowedRoles={["PATIENT"]}>
+                <PatientLayout>
+                  <PatientOnboarding />
+                </PatientLayout>
+              </ProtectedRoute>
+            }
+          />
+
+          {/* Patient routes */}
           <Route
             path="/patient/dashboard"
             element={
@@ -66,7 +72,6 @@ export default function App() {
               </ProtectedRoute>
             }
           />
-          {/* NEW: schedule form */}
           <Route
             path="/patient/appointments/new"
             element={
@@ -128,9 +133,71 @@ export default function App() {
             }
           />
 
+          {/* Doctor routes */}
+          <Route
+            path="/doctor/dashboard"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorDashboard />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/schedule"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorSchedule />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/patients"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorPatients />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/messages"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorMessages />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/test-results"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorTestResults />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path="/doctor/settings"
+            element={
+              <ProtectedRoute allowedRoles={["DOCTOR"]}>
+                <DoctorLayout>
+                  <DoctorAccountSettings />
+                </DoctorLayout>
+              </ProtectedRoute>
+            }
+          />
+
           {/* Defaults */}
           <Route path="/" element={<Navigate to="/login" replace />} />
-          <Route path="*" element={<Navigate to="/patient/dashboard" replace />} />
+          <Route path="*" element={<Navigate to="/login" replace />} />
         </Routes>
       </BrowserRouter>
     </AuthProvider>
